@@ -1,0 +1,21 @@
+{
+    "folder":  "Excalidraw",
+    "scriptFolderPath":  "Excalidraw/Scripts",
+    "allowJavaScriptFiles":  false,
+    "storeScriptFilesAsJavaScript":  false,
+    "compress":  true,
+    "autosave":  true,
+    "autosaveIntervalDesktop":  15000,
+    "useExcalidrawExtension":  true,
+    "drawingFilenamePrefix":  "Drawing ",
+    "templateFilePath":  "",
+    "sidepanelTabs":  [
+                          "{\"script\":\"Downloaded/Mindmap Builder\",\"title\":\"MindMap Builder\"}"
+                      ],
+    "pinnedScripts":  [
+
+                      ],
+    "enableOnloadScripts":  false,
+    "enableCommandLinks":  false,
+    "startupScriptPath":  ""
+}
