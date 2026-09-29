@@ -22,12 +22,12 @@
 > 站点是纯静态托管，没有后端。想永久保存改动，请用「.excalidraw」导出，
 > 或在本地 Obsidian 库里修改后提交。
 
-顶栏「文档」里是 `src/docs/` 下的 markdown，构建时自动收集成页面。
+顶栏「文档」里的页面，构建时从仓库根目录的 `docs/` 自动收集。
 
 ## 用 Obsidian 打开
 
 ```bash
-git clone https://github.com/<你的用户名>/cs_knowledge.git
+git clone https://github.com/MimicHunterZ/cs_knowledge.git
 ```
 
 然后用 Obsidian 的「打开文件夹作为库」选中该目录。仓库里已经包含：
@@ -38,6 +38,7 @@ git clone https://github.com/<你的用户名>/cs_knowledge.git
 - `Excalidraw/Scripts/Downloaded/Mindmap Builder.md` —— Mindmap Builder 脚本
 
 打开 `Android/思维导图.excalidraw.md`，在「更多选项」里切到 Excalidraw 视图即可编辑。
+
 > Mindmap Builder 不是独立插件，它是 Excalidraw 插件的一个脚本。
 > 想升级插件：Obsidian 设置 → 第三方插件 → 检查更新。
 
@@ -54,24 +55,33 @@ npm run preview  # 预览构建结果
 ### 目录
 
 ```
-site/
-├─ src/
-│  ├─ scene.json        思维导图的场景数据（从 .excalidraw.md 解压而来）
-│  ├─ MindMap.jsx       Excalidraw 交互页
-│  ├─ DocsIndex.jsx     文档列表
-│  ├─ Doc.jsx           markdown 渲染
-│  ├─ docsMap.js        构建时收集 src/docs 下的所有 .md
-│  └─ docs/             文档内容（来自 skill 目录）
-├─ tools/
-│  ├─ extract-scene.mjs 解压 .excalidraw.md → scene.json
-│  └─ verify.mjs        端到端验证（Playwright）
-└─ index.html
+├─ docs/                             站点文档页的内容来源（放 .md 即自动发布）
+├─ Android/思维导图.excalidraw.md     思维导图（源）
+├─ Excalidraw/Scripts/Downloaded/     Mindmap Builder 脚本
+├─ site/
+│  ├─ src/
+│  │  ├─ scene.json     思维导图的场景数据（从 .excalidraw.md 解压而来）
+│  │  ├─ MindMap.jsx    Excalidraw 交互页
+│  │  ├─ DocsIndex.jsx  文档列表
+│  │  ├─ Doc.jsx        markdown 渲染
+│  │  └─ docsMap.js     构建时收集根目录 docs/
+│  ├─ tools/
+│  │  ├─ extract-scene.mjs  解压 .excalidraw.md → scene.json
+│  │  ├─ copy-fonts.mjs     把 Excalidraw 字体复制到 public/（构建时自动执行）
+│  │  ├─ verify.mjs         端到端验证（Playwright）
+│  │  └─ preflight.ps1      提交前密钥/隐私审计
+│  └─ index.html
+└─ .github/workflows/pages.yml
 ```
 
 ### 新增一篇文档
 
-把 `.md` 放进 `site/src/docs/`，重新 `npm run build`，它会自动出现在文档页。
-`docsMap.js` 里的 `BLURBS` 可以给它加一句简介。
+把 `.md` 放进仓库根目录的 `docs/`，重新 `npm run build`，它会自动出现在文档页。
+不需要维护索引文件 —— 构建时用 `import.meta.glob` 收集（见 `site/src/docsMap.js`）。
+
+> 文档**只**从 `docs/` 读取。`.agents/` 是作者私有的 agent 技能目录，
+> 已被 `.gitignore` 排除，也不会被 glob 到，因此新增技能不会误发布到站点。
+> `verify.mjs` 里有专门的探测来守住这条边界。
 
 ### 修改思维导图后同步到站点
 
@@ -86,6 +96,13 @@ npm run build
 `.excalidraw.md` 里的图形数据是 **lz-string（base64 变体）** 压缩的，
 不是标准 zlib/gzip —— 所以用 `lz-string` 解，`extract-scene.mjs` 已经处理好了。
 
+### 字体
+
+Excalidraw 默认从 `esm.sh` 拉字体，这是个本站无法控制的外部 CDN；
+一旦它不可达，中文字形会**静默**回退到系统字体。所以 `copy-fonts.mjs` 会把
+包里的字体子集复制到 `public/fonts/`，并在入口设置
+`window.EXCALIDRAW_ASSET_PATH` 指向本站。字体不进 git（12.5 MB，由构建生成）。
+
 ### 验证
 
 ```bash
@@ -95,8 +112,15 @@ npx http-server dist -p 8080     # 或任意静态服务器
 node tools/verify.mjs http://127.0.0.1:8080/
 ```
 
-验证脚本会检查：画布挂载、**148 个文本节点全部有真实字体宽度**（中文字形缺失会表现为零宽）、
-PNG 导出可用、文档路由可渲染、无控制台报错。
+12 项检查覆盖的都是**会静默出问题**的点：
+
+- 画布挂载、场景元素数量
+- **148 个文本节点是否都有真实字体宽度** —— 中文字形缺失表现为零宽，控制台不报错
+- 字体是否全部来自本站、有无意外第三方请求
+- PNG 导出是否真能产出文件
+- 文档路由是否渲染
+- **`.agents` 技能与笔记是否意外可访问**、文档索引是否泄露 skill 页面
+- 无失败请求、无控制台报错
 
 ## 部署
 

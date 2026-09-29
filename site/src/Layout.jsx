@@ -14,8 +14,7 @@ export default function Layout() {
           </NavLink>
           <NavLink to="/docs">文档</NavLink>
           <a
-            className="gh"
-            href="https://github.com"
+            href="https://github.com/MimicHunterZ/cs_knowledge"
             target="_blank"
             rel="noreferrer noopener"
           >

@@ -74,7 +74,12 @@ body {
 .topbar nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
+}
+
+.topbar nav .tag {
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .topbar nav a {
@@ -83,16 +88,12 @@ body {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 14px;
+  border: 1px solid var(--border);
 }
 
 .topbar nav a:hover {
   background: var(--code-bg);
   color: var(--fg);
-}
-
-.topbar nav a.active {
-  color: var(--accent);
-  font-weight: 600;
 }
 
 .content {
@@ -146,7 +147,9 @@ body {
   overflow: hidden;
 }
 
-/* ---- docs ---- */
+/* ---- docs ----
+   Pages are sourced from the repository's top-level docs/ folder (see
+   src/docsMap.js), never from .agents/. */
 
 .docs {
   max-width: 860px;
@@ -241,3 +244,4 @@ body {
 }
 
 .crumb a { color: var(--accent); text-decoration: none; }
+

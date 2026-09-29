@@ -30,12 +30,26 @@
 .obsidian/plugins/remotely-save/data.json
 
 # ---------------------------------------------------------------------------
+# Private agent skills.
+#
+# `.agents/skills/` holds the author's own tooling documentation. The site's
+# docs pages read from the top-level `docs/` folder instead, so a skill can never
+# be published by accident. This ignore is the second line of defence.
+# ---------------------------------------------------------------------------
+.agents/
+.claude/
+
+# ---------------------------------------------------------------------------
 # Site build artifacts
 # ---------------------------------------------------------------------------
 node_modules/
 dist/
 .vite/
 *.local
+
+# Excalidraw font subsets, copied out of node_modules by tools/copy-fonts.mjs
+# before each build. Regenerated, never committed (12.5 MB).
+site/public/fonts/
 
 # ---------------------------------------------------------------------------
 # Editor / OS noise

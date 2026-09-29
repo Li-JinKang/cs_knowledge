@@ -3,12 +3,13 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Interactive site for the cs_knowledge Obsidian vault: Excalidraw mind map viewer plus rendered markdown docs.",
+  "description": "Interactive viewer for the cs_knowledge mind map: pan, zoom, edit and export the Excalidraw scene in the browser.",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node tools/copy-fonts.mjs && vite",
+    "build": "node tools/copy-fonts.mjs && vite build",
     "preview": "vite preview",
-    "extract": "node tools/extract-scene.mjs"
+    "extract": "node tools/extract-scene.mjs",
+    "verify": "node tools/verify.mjs"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.1",

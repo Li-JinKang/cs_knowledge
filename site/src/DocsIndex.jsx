@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { docsMap, listDocs } from './docsMap.js';
+import { listDocs } from './docsMap.js';
 
 export default function DocsIndex() {
   const entries = listDocs();
@@ -8,11 +8,23 @@ export default function DocsIndex() {
     return acc;
   }, {});
 
+  if (entries.length === 0) {
+    return (
+      <div className="docs">
+        <h1>文档</h1>
+        <p style={{ color: 'var(--muted)' }}>
+          还没有文档。在仓库根目录的 <code>docs/</code> 里放一个 <code>.md</code> 文件，
+          重新构建后它就会出现在这里。
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="docs">
       <h1>文档</h1>
       <p style={{ color: 'var(--muted)' }}>
-        这些页面在构建时从站点的 <code>src/docs/</code> 目录收集而来。
+        这些页面在构建时从仓库的 <code>docs/</code> 目录收集而来。
         新增一个 <code>.md</code> 文件并重新构建，它就会出现在这里。
       </p>
 

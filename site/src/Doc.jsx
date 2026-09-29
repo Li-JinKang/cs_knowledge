@@ -11,7 +11,7 @@ function stripFrontmatter(text) {
 }
 
 // Resolve a relative markdown link against the current document's directory so
-// `references/x.md` inside `SKILL.md` points at the right route.
+// `guide/setup.md` inside `index.md` points at the right route.
 function resolveDocPath(current, href) {
   if (!href.endsWith('.md')) return null;
   if (href.startsWith('/')) return href.slice(1);
@@ -63,8 +63,8 @@ export default function Doc() {
         </p>
         <h1>找不到这篇文档</h1>
         <p style={{ color: 'var(--muted)' }}>
-          <code>src/docs/{path}</code> 不存在。可能是链接写错了，
-          或者该文件还没被复制到站点目录。
+          <code>docs/{path}</code> 不存在。可能是链接写错了，
+          或者该文件还没放进去。
         </p>
       </div>
     );

@@ -9,6 +9,16 @@ import Doc from './Doc.jsx';
 import '@excalidraw/excalidraw/index.css';
 import './styles.css';
 
+// Tell Excalidraw to load fonts from this site rather than its built-in fallback
+// (https://esm.sh/@excalidraw/excalidraw@<ver>/dist/prod/). Depending on a
+// third-party CDN we do not control means the CJK subsets can fail to load and
+// Chinese labels quietly fall back to whatever the OS happens to have.
+//
+// Must be set BEFORE Excalidraw reads it, hence a side-effect import handled at
+// module scope. Derived from the document base URI so it also resolves when the
+// app is served from a sub-path such as /cs_knowledge/.
+window.EXCALIDRAW_ASSET_PATH = new URL('./', document.baseURI).href;
+
 // HashRouter rather than BrowserRouter: static hosting cannot rewrite unknown
 // paths to index.html, so /docs/x would 404 on refresh. Hashes never reach the
 // server, which is exactly what GitHub Pages needs.
