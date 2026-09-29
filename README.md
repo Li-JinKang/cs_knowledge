@@ -1,9 +1,11 @@
 # cs_knowledge
 
-Android / 计算机基础知识的 Obsidian 库，同时是一个可交互的展示站点。
+一张 Android 知识体系思维导图，以 Obsidian 库 + 可交互网页两种形式提供。
 
-- **在线站点**：思维导图可在浏览器里缩放、拖拽、编辑，笔记渲染为网页
+- **在线站点**：思维导图可在浏览器里缩放、拖拽、编辑，并导出 PNG / SVG / `.excalidraw`
 - **克隆即用**：仓库自带 Excalidraw 插件与 Mindmap Builder，clone 后用 Obsidian 打开就能直接改图
+
+内容刻意保持精简 —— 目前只有思维导图本身，没有附带讲义笔记。
 
 ## 在线看
 
@@ -36,7 +38,6 @@ git clone https://github.com/<你的用户名>/cs_knowledge.git
 - `Excalidraw/Scripts/Downloaded/Mindmap Builder.md` —— Mindmap Builder 脚本
 
 打开 `Android/思维导图.excalidraw.md`，在「更多选项」里切到 Excalidraw 视图即可编辑。
-
 > Mindmap Builder 不是独立插件，它是 Excalidraw 插件的一个脚本。
 > 想升级插件：Obsidian 设置 → 第三方插件 → 检查更新。
 
