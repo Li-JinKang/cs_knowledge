@@ -3,7 +3,7 @@
 一张 Android 知识体系思维导图，以 Obsidian 库 + 可交互网页两种形式提供。
 
 - **在线站点**：思维导图可在浏览器里缩放、拖拽、编辑，并导出 PNG / SVG / `.excalidraw`
-- **克隆即用**：仓库自带 Excalidraw 插件与 Mindmap Builder，clone 后用 Obsidian 打开就能直接改图
+- **克隆即用**：仓库自带 Excalidraw 插件与 Mindmap Builder，clone 后用 Obsidian 打开其中的 `notes/` 子目录就能直接改图
 
 内容刻意保持精简 —— 目前只有思维导图本身，没有附带讲义笔记。
 
@@ -22,7 +22,7 @@
 > 站点是纯静态托管，没有后端。想永久保存改动，请用「.excalidraw」导出，
 > 或在本地 Obsidian 库里修改后提交。
 
-顶栏「文档」里的页面，构建时从仓库根目录的 `docs/` 自动收集。
+顶栏「文档」里的页面，构建时从 vault 的 `notes/docs/` 自动收集。
 
 ## 用 Obsidian 打开
 
@@ -30,14 +30,14 @@
 git clone https://github.com/MimicHunterZ/cs_knowledge.git
 ```
 
-然后用 Obsidian 的「打开文件夹作为库」选中该目录。仓库里已经包含：
+然后用 Obsidian 的「打开文件夹作为库」选中仓库里的 `notes/` 子目录。仓库里已经包含：
 
-- `.obsidian/community-plugins.json` —— 只启用 Excalidraw
-- `.obsidian/plugins/obsidian-excalidraw-plugin/` —— 插件本体（main.js / manifest.json / styles.css）
-- `.obsidian/plugins/obsidian-excalidraw-plugin/data.json` —— 已把 Mindmap Builder 挂到侧边栏
-- `Excalidraw/Scripts/Downloaded/Mindmap Builder.md` —— Mindmap Builder 脚本
+- `notes/.obsidian/community-plugins.json` —— 只启用 Excalidraw
+- `notes/.obsidian/plugins/obsidian-excalidraw-plugin/` —— 插件本体（main.js / manifest.json / styles.css）
+- `notes/.obsidian/plugins/obsidian-excalidraw-plugin/data.json` —— 已把 Mindmap Builder 挂到侧边栏
+- `notes/Excalidraw/Scripts/Downloaded/Mindmap Builder.md` —— Mindmap Builder 脚本
 
-打开 `Android/思维导图.excalidraw.md`，在「更多选项」里切到 Excalidraw 视图即可编辑。
+打开 `notes/Android/思维导图.excalidraw.md`，在「更多选项」里切到 Excalidraw 视图即可编辑。
 
 > Mindmap Builder 不是独立插件，它是 Excalidraw 插件的一个脚本。
 > 想升级插件：Obsidian 设置 → 第三方插件 → 检查更新。
@@ -55,16 +55,19 @@ npm run preview  # 预览构建结果
 ### 目录
 
 ```
-├─ docs/                             站点文档页的内容来源（放 .md 即自动发布）
-├─ Android/思维导图.excalidraw.md     思维导图（源）
-├─ Excalidraw/Scripts/Downloaded/     Mindmap Builder 脚本
-├─ site/
+├─ README.md                        仓库说明（GitHub 首页渲染的就是它；不在库里）
+├─ notes/                            Obsidian 库 —— 用 Obsidian 打开这一层
+│  ├─ .obsidian/                     最小化库配置（Excalidraw 插件随仓库分发）
+│  ├─ docs/                          站点文档页的内容来源（放 .md 即自动发布）
+│  ├─ Android/思维导图.excalidraw.md  思维导图（源）
+│  └─ Excalidraw/Scripts/Downloaded/ Mindmap Builder 脚本
+├─ site/                             站点工程（在 Obsidian 库之外，不会被索引）
 │  ├─ src/
 │  │  ├─ scene.json     思维导图的场景数据（从 .excalidraw.md 解压而来）
 │  │  ├─ MindMap.jsx    Excalidraw 交互页
 │  │  ├─ DocsIndex.jsx  文档列表
 │  │  ├─ Doc.jsx        markdown 渲染
-│  │  └─ docsMap.js     构建时收集根目录 docs/
+│  │  └─ docsMap.js     构建时收集 notes/docs/
 │  ├─ tools/
 │  │  ├─ extract-scene.mjs  解压 .excalidraw.md → scene.json
 │  │  ├─ copy-fonts.mjs     把 Excalidraw 字体复制到 public/（构建时自动执行）
@@ -74,12 +77,20 @@ npm run preview  # 预览构建结果
 └─ .github/workflows/pages.yml
 ```
 
+> **为什么笔记在 `notes/` 而不是仓库根？** `site/node_modules` 有约 1.75 万个文件，
+> 而 Obsidian 会索引并监听库根目录下的每一个文件（`node_modules` 不在它的忽略名单里）。
+> 库若放在仓库根，图谱里就会挤进 509 个依赖自带的 README，启动时还要遍历这 1.75 万个文件。
+> 把库收进 `notes/`，站点工程就整体位于库之外，Obsidian 根本看不到它。
+>
+> 这份 `README.md` 也刻意留在仓库根 —— GitHub 只渲染仓库根目录的 README，
+> 所以它同样不在库里，改它请用任意编辑器，别在 Obsidian 里找。
+
 ### 新增一篇文档
 
-把 `.md` 放进仓库根目录的 `docs/`，重新 `npm run build`，它会自动出现在文档页。
+把 `.md` 放进 vault 的 `notes/docs/`，重新 `npm run build`，它会自动出现在文档页。
 不需要维护索引文件 —— 构建时用 `import.meta.glob` 收集（见 `site/src/docsMap.js`）。
 
-> 文档**只**从 `docs/` 读取。`.agents/` 是作者私有的 agent 技能目录，
+> 文档**只**从 `notes/docs/` 读取。`.agents/` 是作者私有的 agent 技能目录，
 > 已被 `.gitignore` 排除，也不会被 glob 到，因此新增技能不会误发布到站点。
 > `verify.mjs` 里有专门的探测来守住这条边界。
 
@@ -89,7 +100,7 @@ npm run preview  # 预览构建结果
 
 ```bash
 cd site
-node tools/extract-scene.mjs ../Android/思维导图.excalidraw.md src/scene.json
+node tools/extract-scene.mjs ../notes/Android/思维导图.excalidraw.md src/scene.json
 npm run build
 ```
 
@@ -115,7 +126,7 @@ node tools/verify.mjs http://127.0.0.1:8080/
 12 项检查覆盖的都是**会静默出问题**的点：
 
 - 画布挂载、场景元素数量
-- **148 个文本节点是否都有真实字体宽度** —— 中文字形缺失表现为零宽，控制台不报错
+- **169 个文本节点是否都有真实字体宽度** —— 中文字形缺失表现为零宽，控制台不报错
 - 字体是否全部来自本站、有无意外第三方请求
 - PNG 导出是否真能产出文件
 - 文档路由是否渲染
@@ -134,6 +145,6 @@ node tools/verify.mjs http://127.0.0.1:8080/
 
 ## 注意
 
-- 仓库有意**不包含** `.obsidian/workspace.json`、`hotkeys.json` 等个人运行状态
+- 仓库有意**不包含** `notes/.obsidian/workspace.json`、`hotkeys.json` 等个人运行状态
 - 若你安装了带 API key 的插件（如 Copilot），**不要提交它的 `data.json`**；
   往 `.gitignore` 里加一条

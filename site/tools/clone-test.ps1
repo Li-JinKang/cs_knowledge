@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Continue'
 # literal. PowerShell 5.1 reads a BOM-less script as ANSI, which mangles any
 # non-ASCII literal in the source and produces bogus "file missing" results.
 $cn = -join (0x601D, 0x7EF4, 0x5BFC, 0x56FE | ForEach-Object { [char]$_ })   # 思维导图
-$drawingRel = "Android\$cn.excalidraw.md"
+$drawingRel = "notes\Android\$cn.excalidraw.md"
 
 # Simulate a fresh clone. `git archive` emits exactly the tracked content of a
 # commit, so anything .gitignore excludes is genuinely absent -- the same view a
@@ -25,7 +25,7 @@ Write-Host '=== cloned tree (top level) ==='
 Get-ChildItem $tmp -Force | Select-Object Mode, Name | Format-Table -AutoSize | Out-String | Write-Host
 
 Write-Host '=== is it recognisable as an Obsidian vault? ==='
-$obs = Join-Path $tmp '.obsidian'
+$obs = Join-Path $tmp 'notes\.obsidian'
 foreach ($f in 'community-plugins.json', 'app.json', 'core-plugins.json') {
   Write-Host ("  {0,-28} {1}" -f $f, (Test-Path (Join-Path $obs $f)))
 }
@@ -50,7 +50,7 @@ if (Test-Path $cfgPath) {
   $cfg = Get-Content $cfgPath -Raw | ConvertFrom-Json
   Write-Host ("  sidepanelTabs   : " + ($cfg.sidepanelTabs -join ' | '))
 }
-Write-Host ("  builder script  : " + (Test-Path (Join-Path $tmp 'Excalidraw\Scripts\Downloaded\Mindmap Builder.md')))
+Write-Host ("  builder script  : " + (Test-Path (Join-Path $tmp 'notes\Excalidraw\Scripts\Downloaded\Mindmap Builder.md')))
 
 Write-Host ''
 Write-Host '=== can the drawing be read? ==='
@@ -70,7 +70,7 @@ foreach ($p in 'site\package.json', 'site\package-lock.json', 'site\src\scene.js
 
 Write-Host ''
 Write-Host '=== personal state correctly ABSENT from the clone? ==='
-foreach ($p in '.obsidian\workspace.json', '.obsidian\workspaces.json', '.obsidian\hotkeys.json', '.obsidian\appearance.json', 'site\node_modules', 'site\dist') {
+foreach ($p in 'notes\.obsidian\workspace.json', 'notes\.obsidian\workspaces.json', 'notes\.obsidian\hotkeys.json', 'notes\.obsidian\appearance.json', 'site\node_modules', 'site\dist') {
   $present = Test-Path (Join-Path $tmp $p)
   Write-Host ("  {0,-36} present={1}" -f $p, $present)
 }

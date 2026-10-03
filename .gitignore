@@ -1,39 +1,45 @@
 # ---------------------------------------------------------------------------
 # Obsidian runtime state that must NOT be published.
 #
-# The vault ships a *minimal* .obsidian so that cloning it and opening it in
-# Obsidian Just Works. Everything listed here is per-machine personal state.
+# The vault lives in `notes/`, NOT at the repository root: Obsidian indexes and
+# watches every file under the vault root, and site/node_modules alone holds
+# ~17.5k files. Keeping the vault in its own subdirectory is the only way to keep
+# dependency READMEs out of the graph view and off the file watcher.
+#
+# The vault ships a *minimal* .obsidian so that cloning it and opening `notes/`
+# in Obsidian Just Works. Everything listed below is per-machine personal state,
+# which is why every path here is anchored under notes/.
 #
 # Deliberately NOT using a blanket `plugins/*/data.json` ignore: the Excalidraw
 # plugin's data.json IS committed (it wires MindMap Builder into the sidepanel),
 # and git's negation rules do not behave predictably for files inside an ignored
 # directory. Listing the unwanted files explicitly avoids that trap entirely.
 # ---------------------------------------------------------------------------
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/workspaces.json
-.obsidian/hotkeys.json
-.obsidian/graph.json
-.obsidian/backlink.json
-.obsidian/canvas.json
-.obsidian/page-preview.json
-.obsidian/types.json
-.obsidian/webviewer.json
-.obsidian/core-plugins-migration.json
-.obsidian/appearance.json
-.obsidian/community-plugins.json.bak
+notes/.obsidian/workspace.json
+notes/.obsidian/workspace-mobile.json
+notes/.obsidian/workspaces.json
+notes/.obsidian/hotkeys.json
+notes/.obsidian/graph.json
+notes/.obsidian/backlink.json
+notes/.obsidian/canvas.json
+notes/.obsidian/page-preview.json
+notes/.obsidian/types.json
+notes/.obsidian/webviewer.json
+notes/.obsidian/core-plugins-migration.json
+notes/.obsidian/appearance.json
+notes/.obsidian/community-plugins.json.bak
 
 # Credentials live in plugin data files (the AI plugins store plaintext API
 # keys). If you add any plugin beyond Excalidraw, ignore its data.json here.
-.obsidian/plugins/obsidian-copilot/data.json
-.obsidian/plugins/copilot/data.json
-.obsidian/plugins/remotely-save/data.json
+notes/.obsidian/plugins/obsidian-copilot/data.json
+notes/.obsidian/plugins/copilot/data.json
+notes/.obsidian/plugins/remotely-save/data.json
 
 # ---------------------------------------------------------------------------
 # Private agent skills.
 #
 # `.agents/skills/` holds the author's own tooling documentation. The site's
-# docs pages read from the top-level `docs/` folder instead, so a skill can never
+# docs pages read from the vault's `notes/docs/` folder instead, so a skill can never
 # be published by accident. This ignore is the second line of defence.
 # ---------------------------------------------------------------------------
 .agents/

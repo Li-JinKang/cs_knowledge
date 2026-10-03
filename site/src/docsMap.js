@@ -1,19 +1,23 @@
-// Build-time glob of every markdown file in the repository's top-level `docs/`
-// folder.
+// Build-time glob of every markdown file in the vault's `docs/` folder.
+//
+// The vault lives in `notes/` rather than at the repository root on purpose:
+// `site/node_modules` holds ~17.5k files, and Obsidian indexes and watches every
+// file under the vault root. Keeping the vault outside `site/` is the only way to
+// keep dependency READMEs out of the graph view.
 //
 // Why `docs/` and not `.agents/`: the site is a public artifact, while the
 // `.agents/` directory holds the author's private agent skills. Keeping the two
 // separate means adding a skill can never accidentally publish it. To publish a
-// new page, drop a .md into `docs/` and rebuild.
+// new page, drop a .md into `notes/docs/` and rebuild.
 //
 // Vite turns this into a static map of path -> lazy loader, so there is no index
 // file to maintain.
-const modules = import.meta.glob('../../docs/**/*.md', { query: '?raw', import: 'default' });
+const modules = import.meta.glob('../../notes/docs/**/*.md', { query: '?raw', import: 'default' });
 
 export const docsMap = Object.fromEntries(
   Object.entries(modules).map(([path, load]) => [
-    // '../../docs/guide/setup.md' -> 'guide/setup.md'
-    path.replace(/^(\.\.\/)+docs\//, ''),
+    // '../../notes/docs/guide/setup.md' -> 'guide/setup.md'
+    path.replace(/^(\.\.\/)+notes\/docs\//, ''),
     load,
   ])
 );

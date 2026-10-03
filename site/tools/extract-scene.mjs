@@ -12,7 +12,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const LZString = require('lz-string');
 
-const input = process.argv[2] ?? 'F:/StudyReview/Android/思维导图.excalidraw.md';
+const input = process.argv[2] ?? '../notes/Android/思维导图.excalidraw.md';
 const output = process.argv[3] ?? 'src/scene.json';
 
 const raw = readFileSync(input, 'utf8');
