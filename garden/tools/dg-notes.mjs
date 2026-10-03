@@ -3,7 +3,7 @@
 // Digital Garden 模板对笔记有两个隐含要求，不满足就会静默出问题：
 //
 //   1. 每篇笔记必须有 permalink。模板的回退值是 /notes/<slugify(路径)>，而
-//      slugify 会把中文字符全部丢掉，于是 docs/android/四大组件/APP 如何启动的
+//      slugify 会把中文字符全部丢掉，于是 docs/android/四大组件/APP 启动过程详解
 //      变成 /notes/docs-android-app，页面直接 404。真实使用是 Obsidian 插件
 //      发布时写进去的，手工搬运没有这一步。
 //
