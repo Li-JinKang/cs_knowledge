@@ -10,6 +10,7 @@
 //
 // Usage:
 //   cd garden && npm run build && npm run verify
+//   npm run verify -- https://你的站点.pages.dev/     # 直接验线上
 //
 // 需要系统装了 Chrome（用 channel: 'chrome'，不另外下载浏览器）。
 
@@ -22,10 +23,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const gardenRoot = resolve(here, '..');
 const DIST = join(gardenRoot, 'dist');
 
-if (!existsSync(DIST)) {
-  console.error('找不到 dist/，先跑 npm run build');
-  process.exit(1);
-}
+// 传了地址就验线上，否则起本地服务器验 dist/
+const targetUrl = process.argv[2];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -68,18 +67,32 @@ function check(name, pass, detail = '') {
 
 async function main() {
   const { chromium } = await import('playwright-core');
-  const server = await serve();
-  const base = `http://127.0.0.1:${server.address().port}`;
+
+  let server = null;
+  let base = targetUrl;
+  if (base) {
+    base = base.replace(/\/$/, '');
+    console.log(`验证线上站点：${base}\n`);
+  } else {
+    if (!existsSync(DIST)) {
+      console.error('找不到 dist/，先跑 npm run build');
+      process.exit(1);
+    }
+    server = await serve();
+    base = `http://127.0.0.1:${server.address().port}`;
+  }
 
   const browser = await chromium.launch({ channel: 'chrome' });
   const page = await browser.newPage({ viewport: { width: 1500, height: 1000 } });
 
+  // 允许的域名从被测地址推导：验本地时是 127.0.0.1，验线上时是站点自己的域名
+  const ownHost = new URL(base).hostname;
   const external = new Set();
   const failed = [];
   const errors = [];
   page.on('request', (r) => {
     const u = new URL(r.url());
-    if (!['127.0.0.1', 'localhost'].includes(u.hostname)) external.add(u.origin);
+    if (u.hostname !== ownHost) external.add(u.origin);
   });
   page.on('response', (r) => {
     // 主题（Red-Graphite）引用了几个它自己没带的字体，404 无害，回落系统字体
@@ -141,7 +154,7 @@ async function main() {
   check('没有 JS 运行时错误', errors.length === 0, errors.length ? errors[0].slice(0, 120) : '零');
 
   await browser.close();
-  server.close();
+  if (server) server.close();
 
   const bad = results.filter((r) => !r.pass);
   console.log(`\n${results.length - bad.length}/${results.length} 项通过`);

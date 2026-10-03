@@ -8,7 +8,7 @@ Android 知识体系的 Obsidian 库，以及由它生成的公开笔记本站�
 
 ## 在线看
 
-站点：`https://<你的 Cloudflare Pages 项目>.pages.dev/`（部署后填这里）
+**<https://cs-knowledge-r1t.pages.dev/>**
 
 - **笔记**：左侧文件树，右侧正文，支持反向链接、大纲、全文搜索
 - **关系图谱**：每个页面右上角有局部图谱，可以切到全局
