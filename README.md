@@ -1,28 +1,19 @@
 # cs_knowledge
 
-一张 Android 知识体系思维导图，以 Obsidian 库 + 可交互网页两种形式提供。
+Android 知识体系的 Obsidian 库，以及由它生成的公开笔记本站点。
 
-- **在线站点**：思维导图可在浏览器里缩放、拖拽、编辑，并导出 PNG / SVG / `.excalidraw`
-- **克隆即用**：仓库自带 Excalidraw 插件与 Mindmap Builder，clone 后用 Obsidian 打开其中的 `notes/` 子目录就能直接改图
-
-内容刻意保持精简 —— 目前只有思维导图本身，没有附带讲义笔记。
+```
+你在 Obsidian 里写 → git push → 站点自动重建上线
+```
 
 ## 在线看
 
-站点首页是一张可交互的思维导图：
+站点：`https://<你的 Cloudflare Pages 项目>.pages.dev/`（部署后填这里）
 
-| 操作 | 说明 |
-|---|---|
-| 滚轮 / 触控板 | 缩放 |
-| 按住空格拖动，或直接拖动空白处 | 平移画布 |
-| 「浏览模式 / 编辑中」按钮 | 解锁后可拖动节点、改文字、加图形 |
-| PNG / SVG / .excalidraw | 导出当前画面 |
-
-> **网页上的编辑只保存在你自己的浏览器（localStorage），不会写回仓库。**
-> 站点是纯静态托管，没有后端。想永久保存改动，请用「.excalidraw」导出，
-> 或在本地 Obsidian 库里修改后提交。
-
-顶栏「文档」里的页面，构建时从 vault 的 `notes/docs/` 自动收集。
+- **笔记**：左侧文件树，右侧正文，支持反向链接、大纲、全文搜索
+- **关系图谱**：每个页面右上角有局部图谱，可以切到全局
+- **思维导图**：`Android/思维导图.excalidraw` 这一页是**真的 Excalidraw 画布**，
+  可以缩放、拖拽，和 Obsidian 里看到的一致（只读，改图请在 Obsidian 里改）
 
 ## 用 Obsidian 打开
 
@@ -30,10 +21,11 @@
 git clone https://github.com/MimicHunterZ/cs_knowledge.git
 ```
 
-然后用 Obsidian 的「打开文件夹作为库」选中仓库里的 `notes/` 子目录。仓库里已经包含：
+用 Obsidian 的「打开文件夹作为库」选中仓库里的 **`notes/`** 子目录，不要选仓库根。
+仓库里已经包含：
 
 - `notes/.obsidian/community-plugins.json` —— 只启用 Excalidraw
-- `notes/.obsidian/plugins/obsidian-excalidraw-plugin/` —— 插件本体（main.js / manifest.json / styles.css）
+- `notes/.obsidian/plugins/obsidian-excalidraw-plugin/` —— 插件本体
 - `notes/.obsidian/plugins/obsidian-excalidraw-plugin/data.json` —— 已把 Mindmap Builder 挂到侧边栏
 - `notes/Excalidraw/Scripts/Downloaded/Mindmap Builder.md` —— Mindmap Builder 脚本
 
@@ -42,109 +34,101 @@ git clone https://github.com/MimicHunterZ/cs_knowledge.git
 > Mindmap Builder 不是独立插件，它是 Excalidraw 插件的一个脚本。
 > 想升级插件：Obsidian 设置 → 第三方插件 → 检查更新。
 
-## 本地开发站点
-
-```bash
-cd site
-npm install
-npm run dev      # 开发服务器
-npm run build    # 产物输出到 site/dist
-npm run preview  # 预览构建结果
-```
-
-### 目录
+## 目录
 
 ```
-├─ README.md                        仓库说明（GitHub 首页渲染的就是它；不在库里）
+├─ README.md                         本文件（GitHub 只渲染仓库根的 README，它不在库里）
 ├─ notes/                            Obsidian 库 —— 用 Obsidian 打开这一层
 │  ├─ .obsidian/                     最小化库配置（Excalidraw 插件随仓库分发）
-│  ├─ docs/                          站点文档页的内容来源（放 .md 即自动发布）
-│  ├─ Android/思维导图.excalidraw.md  思维导图（源）
-│  └─ Excalidraw/Scripts/Downloaded/ Mindmap Builder 脚本
-├─ site/                             站点工程（在 Obsidian 库之外，不会被索引）
-│  ├─ src/
-│  │  ├─ scene.json     思维导图的场景数据（从 .excalidraw.md 解压而来）
-│  │  ├─ MindMap.jsx    Excalidraw 交互页
-│  │  ├─ DocsIndex.jsx  文档列表
-│  │  ├─ Doc.jsx        markdown 渲染
-│  │  └─ docsMap.js     构建时收集 notes/docs/
-│  ├─ tools/
-│  │  ├─ extract-scene.mjs  解压 .excalidraw.md → scene.json
-│  │  ├─ copy-fonts.mjs     把 Excalidraw 字体复制到 public/（构建时自动执行）
-│  │  ├─ verify.mjs         端到端验证（Playwright）
-│  │  └─ preflight.ps1      提交前密钥/隐私审计
-│  └─ index.html
-└─ .github/workflows/pages.yml
+│  ├─ docs/                          会发布成站点的笔记
+│  ├─ Android/思维导图.excalidraw.md  思维导图（源文件）
+│  └─ Excalidraw/Scripts/Downloaded/ Mindmap Builder 脚本（不发布，属于工具）
+└─ garden/                           站点工程（Digital Garden 模板 + 本地化改造）
+   ├─ src/site/notes/                构建期从 ../../notes 同步，不进 git
+   ├─ src/site/vendor/               本地化的第三方库，零 CDN 依赖
+   ├─ tools/                         构建脚本，见下
+   └─ .eleventy.js  package.json
 ```
 
-> **为什么笔记在 `notes/` 而不是仓库根？** `site/node_modules` 有约 1.75 万个文件，
+> **为什么库在 `notes/` 而不是仓库根？** `garden/node_modules` 有上万个文件，
 > 而 Obsidian 会索引并监听库根目录下的每一个文件（`node_modules` 不在它的忽略名单里）。
-> 库若放在仓库根，图谱里就会挤进 509 个依赖自带的 README，启动时还要遍历这 1.75 万个文件。
+> 库若放在仓库根，图谱里会挤进几百个依赖自带的 README，启动时还要遍历这些文件。
 > 把库收进 `notes/`，站点工程就整体位于库之外，Obsidian 根本看不到它。
->
-> 这份 `README.md` 也刻意留在仓库根 —— GitHub 只渲染仓库根目录的 README，
-> 所以它同样不在库里，改它请用任意编辑器，别在 Obsidian 里找。
 
-### 新增一篇文档
+## 写一篇笔记 / 改思维导图，然后上线
 
-把 `.md` 放进 vault 的 `notes/docs/`，重新 `npm run build`，它会自动出现在文档页。
-不需要维护索引文件 —— 构建时用 `import.meta.glob` 收集（见 `site/src/docsMap.js`）。
+**你只需要 `git push`。** 其余全在构建期自动完成：
 
-> 文档**只**从 `notes/docs/` 读取。`.agents/` 是作者私有的 agent 技能目录，
-> 已被 `.gitignore` 排除，也不会被 glob 到，因此新增技能不会误发布到站点。
-> `verify.mjs` 里有专门的探测来守住这条边界。
-
-### 修改思维导图后同步到站点
-
-在 Obsidian 里改完图，重新解压场景：
-
-```bash
-cd site
-node tools/extract-scene.mjs ../notes/Android/思维导图.excalidraw.md src/scene.json
-npm run build
+```
+git add -A && git commit -m "..." && git push
+   ↓ Cloudflare Pages 自动构建（约 1~2 分钟）
+同步 notes/ → garden/src/site/notes/
+补 permalink（否则中文文件名会被 slugify 吃光，页面 404）
+把 [[最短路径]] 重写成模板认识的 [[路径|显示名]]（否则关系图谱 0 条边）
+标记 dg-publish（否则首页不列这篇）
+解压画布场景、把画布页换成挂载点、翻译画布里的 [[链接]]
+打包 Excalidraw 渲染岛、复制字体
+   ↓
+上线
 ```
 
-`.excalidraw.md` 里的图形数据是 **lz-string（base64 变体）** 压缩的，
-不是标准 zlib/gzip —— 所以用 `lz-string` 解，`extract-scene.mjs` 已经处理好了。
+新增一篇笔记就是把 `.md` 丢进 `notes/` 的任意位置（`Excalidraw/` 除外，那是工具目录）。
+不需要维护任何索引文件。
 
-### 字体
+## 站点工程说明
 
-Excalidraw 默认从 `esm.sh` 拉字体，这是个本站无法控制的外部 CDN；
-一旦它不可达，中文字形会**静默**回退到系统字体。所以 `copy-fonts.mjs` 会把
-包里的字体子集复制到 `public/fonts/`，并在入口设置
-`window.EXCALIDRAW_ASSET_PATH` 指向本站。字体不进 git（12.5 MB，由构建生成）。
+`garden/` 是 [oleeskild/digitalgarden](https://github.com/oleeskild/digitalgarden) 模板
+（MIT，482 stars），加上为了这个仓库做的几处改造：
 
-### 验证
+| 改造 | 为什么 |
+|---|---|
+| `src/site/vendor/` 本地化全部第三方库 | 模板原本依赖 jsdelivr / cdnjs / unpkg 加载图谱（d3 + Pixi）、搜索（flexsearch）、高亮（prism）、Mermaid、图标（lucide）。国内经常不通，站点会残废。`tools/vendor-cdn.mjs` 可重建 |
+| `tools/dg-sync-notes.mjs` | 模板规定笔记住在 `src/site/notes/`，我们的库在 `notes/`。构建期同步，避免维护两份 |
+| `tools/dg-notes.mjs` | 补 `permalink`、重写 wikilink、标记 `dg-publish` |
+| `tools/dg-excalidraw.mjs` | 把 `.excalidraw.md` 变成真画布页 |
+| `tools/dg-excalidraw-build/` | 把 `@excalidraw/excalidraw` 打成自托管 IIFE（7.6 MB，只在画布页加载） |
+
+### 几个会静默失败的坑（都已处理）
+
+1. **Eleventy 默认读 `.gitignore`。** 我们把同步进来的笔记 gitignore 掉了，
+   结果构建「成功」但整站一篇笔记都没有。`.eleventy.js` 里加了 `setUseGitIgnore(false)`。
+2. **模板的 `wikiLinkRegex` 只认带竖线的链接**（`/\[\[(.*?\|.*?)\]\]/g`）。
+   Obsidian 默认的 `[[最短路径]]` 写出来图谱一条边都没有。
+3. **模板用绝对路径**（`fetch('/graph.json')`、`/styles/…`），
+   所以站点必须部署在**域名根**上 —— 这正是不用 GitHub Pages 项目页的原因。
+4. **d3 的 jsdelivr `+esm` 产物内部用根相对路径引传递依赖**，单独下载那 4 个文件
+   看着正常、运行全是 404。`tools/vendor-cdn.mjs` 会递归抓并改写成相对路径。
+
+## 本地开发
 
 ```bash
-cd site
-npm run build
-npx http-server dist -p 8080     # 或任意静态服务器
-node tools/verify.mjs http://127.0.0.1:8080/
+cd garden
+npm install
+npm run dev      # 开发服务器 http://localhost:8080
+npm run build    # 产物输出到 garden/dist
 ```
-
-12 项检查覆盖的都是**会静默出问题**的点：
-
-- 画布挂载、场景元素数量
-- **169 个文本节点是否都有真实字体宽度** —— 中文字形缺失表现为零宽，控制台不报错
-- 字体是否全部来自本站、有无意外第三方请求
-- PNG 导出是否真能产出文件
-- 文档路由是否渲染
-- **`.agents` 技能与笔记是否意外可访问**、文档索引是否泄露 skill 页面
-- 无失败请求、无控制台报错
 
 ## 部署
 
-推送到 `main` 分支即自动触发 `.github/workflows/pages.yml`，
-构建 `site/` 并发布到 GitHub Pages。
+Cloudflare Pages，Git 集成，构建配置：
 
-仓库设置里把 **Settings → Pages → Source** 设为 **GitHub Actions**。
+```
+Root directory:      garden
+Build command:       npm run build
+Build output:        dist
+环境变量 NODE_VERSION: 22
+```
 
-站点用相对路径引用资源、用 hash 路由，所以放在
-`https://<用户名>.github.io/cs_knowledge/` 这样的子路径下也不需要改配置。
+推送到 `main` 即自动构建上线；PR 会自动生成预览部署。
+
+> **不要用 GitHub Pages 的项目页**（`<用户名>.github.io/cs_knowledge/`）：
+> 模板的资源路径是绝对路径，放子路径会全部 404。
+> 详见模板的 [issue #211](https://github.com/oleeskild/digitalgarden/issues/211)（2023 年提的，至今 open）。
 
 ## 注意
 
 - 仓库有意**不包含** `notes/.obsidian/workspace.json`、`hotkeys.json` 等个人运行状态
 - 若你安装了带 API key 的插件（如 Copilot），**不要提交它的 `data.json`**；
   往 `.gitignore` 里加一条
+- `notes/` 里的东西默认**全部公开**（同步脚本只排除点开头的目录和 `Excalidraw/`）。
+  要放私密内容，请另建一个库

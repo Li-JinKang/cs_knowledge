@@ -1,0 +1,87 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{% if metatags %}
+    {% for name, content in metatags %}
+        {% if name.includes("og:") %}
+          <meta property="{{ name }}" content="{{ content }}">
+        {% else %}
+          <meta name="{{ name }}" content="{{ content }}">
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<script type="importmap">
+{
+  "imports": {
+    "d3-force": "/vendor/d3/d3-force.js",
+    "d3-selection": "/vendor/d3/d3-selection.js",
+    "d3-zoom": "/vendor/d3/d3-zoom.js",
+    "d3-drag": "/vendor/d3/d3-drag.js"
+  }
+}
+</script>
+<script src="/vendor/pixi.min.js"></script>
+
+{# mermaid 用 ESM 入口 + 本地 chunks：它按需动态 import 各图表类型，
+   全量 UMD 版有 3.5 MB 会拖慢每个页面。 #}
+<script async type="module">
+    import mermaid from '/vendor/mermaid/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script>
+<script src="/vendor/prism/prism.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+<script>
+  // autoloader 默认去 cdnjs 取语言包，这里指到本地；只放了这个库用得到的语言。
+  if (window.Prism && window.Prism.plugins && window.Prism.plugins.autoloader) {
+    window.Prism.plugins.autoloader.languages_path = '/vendor/prism/components/';
+  }
+</script>
+
+{%include "components/calloutScript.njk"%}
+
+<script defer src="/vendor/alpine/persist.min.js"></script>
+<script defer src="/vendor/alpine/alpine.min.js"></script>
+
+<link rel="stylesheet" href="/vendor/prism/prism-okaidia.min.css">
+
+{# whatwg-fetch 是给不支持 fetch 的老浏览器用的，现代浏览器都是原生 fetch #}
+
+{%-if meta.themeStyle%}
+    <link href="/styles/obsidian-base.css" rel="stylesheet">
+    <link href="{{meta.themeStyle}}" rel="stylesheet">
+{% else %}
+    <link href="/styles/style.css" rel="stylesheet">
+{%endif%}
+<link href="/styles/digital-garden-base.css" rel="stylesheet">
+
+<link href="/styles/custom-style.css" rel="stylesheet">
+{#- Plugin styles load before user styles so user CSS keeps the last word -#}
+{%- for style in plugins.styles -%}
+<link href="{{style}}?v={{meta.buildDate|isoDate}}" rel="stylesheet">
+{%- endfor -%}
+{%- for style in dynamics.styles -%}
+<link href="{{style}}?v={{meta.buildDate|isoDate}}" rel="stylesheet">
+{%- endfor -%}
+{%- for script in plugins.scripts -%}
+<script defer src="{{script}}?v={{meta.buildDate|isoDate}}"></script>
+{%- endfor -%}
+
+{% favicons './.cache/favicon.normalized.svg', appleIconBgColor='#123' %}
+
+{% if meta.styleSettingsCss %}
+    <style>
+        {{ meta.styleSettingsCss | safe }}
+    </style>
+{% endif %}
+{% if meta.logoHeight %}
+    <style>
+        :root {
+            --dg-logo-height: {{ meta.logoHeight }};
+            --dg-logo-height-mobile: {{ meta.logoHeight }};
+            --dg-filetree-logo-height: {{ meta.logoHeight }};
+        }
+    </style>
+{% endif %}
+<style>
+</style>

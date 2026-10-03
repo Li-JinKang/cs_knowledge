@@ -2,7 +2,7 @@
 # Obsidian runtime state that must NOT be published.
 #
 # The vault lives in `notes/`, NOT at the repository root: Obsidian indexes and
-# watches every file under the vault root, and site/node_modules alone holds
+# watches every file under the vault root, and garden/node_modules alone holds
 # ~17.5k files. Keeping the vault in its own subdirectory is the only way to keep
 # dependency READMEs out of the graph view and off the file watcher.
 #
@@ -53,9 +53,8 @@ dist/
 .vite/
 *.local
 
-# Excalidraw font subsets, copied out of node_modules by tools/copy-fonts.mjs
-# before each build. Regenerated, never committed (12.5 MB).
-site/public/fonts/
+# garden/ 的构建产物由它自己的 .gitignore 管：
+# 字体、Excalidraw 渲染岛、画布场景、以及从 notes/ 同步进来的笔记副本。
 
 # ---------------------------------------------------------------------------
 # Editor / OS noise

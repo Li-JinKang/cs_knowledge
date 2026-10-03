@@ -1,0 +1,44 @@
+body {
+    /***
+      ADD YOUR CUSTOM STYLING HERE. (INSIDE THE body {...} section.)
+      IT WILL TAKE PRECEDENCE OVER THE STYLING IN THE STYLE.CSS FILE.
+   ***/
+    //  background-color: white;
+    //  .content {
+    //   font-size: 14px;
+    //  }
+    //  h1 {
+    //   color: black;
+    //  }
+}
+
+
+// ---- dg-excalidraw：让画布铺满左侧文件树右边的整个区域 ----
+// 顶部标题/标签、右侧目录与关系图谱面板都隐藏；左侧文件树保留。
+body:has(.dg-excalidraw-root) {
+  main.content {
+    // 只放开右侧与内边距，左边距要保留：它正是左侧文件树让出来的宽度
+    max-width: none;
+    margin-right: 0;
+    padding: 0;
+  }
+
+  main.content > header {
+    display: none;
+  }
+
+  aside {
+    display: none;
+  }
+}
+
+.dg-excalidraw-root {
+  // left 由页面脚本按文件树实际宽度设定
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 330px;
+  z-index: 5;
+  background: var(--background-primary);
+}
